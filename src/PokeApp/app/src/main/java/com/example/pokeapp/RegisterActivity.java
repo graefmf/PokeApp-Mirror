@@ -36,7 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         final String nameText = ((EditText)findViewById(R.id.nameField)).getText().toString();
         if(nameText != "") {
             //create pokey thread to register
-            Thread t = p.newThread(new Pokey(queue, "https://poke.zachlef.in/register/name="+nameText, p));
+            Thread t = p.newThread(new Pokey(queue, "https://poke.zachlef.in/poke/register/name="+nameText, p));
             t.start();
             //create thread to wait for result
             wait = new Thread(new Runnable(){
@@ -54,26 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void saveUUID(String U) {
-        String filename = getString(R.string.uuid_file);
-        String contents = U;
-        FileOutputStream fos = null;
-        //open file output and write string as bytes
-        try {
-            fos = this.openFileOutput(filename, Context.MODE_PRIVATE);
-            fos.write(contents.getBytes());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //close file, if it was ever opened
-        if(fos != null) {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        FileManager.writePrivate(this, getString(R.string.uuid_file), U);
 
         //return to main activity
         Intent i = new Intent(this, MainActivity.class);

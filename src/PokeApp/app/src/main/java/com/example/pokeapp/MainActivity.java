@@ -58,31 +58,8 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void d2(View v) {
         String filename = getString(R.string.uuid_file);
-        FileInputStream fis = null;
-        InputStreamReader isr = null;
-        //open file input to get back earlier thing
-        try {
-            fis = this.openFileInput(filename);
-            isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        //assuming that worked, build string out of file contents
-        if(fis != null && isr != null) {
-            StringBuilder stringBuilder = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(isr)) {
-                String line = reader.readLine();
-                while (line != null) {
-                    stringBuilder.append(line).append('\n');
-                    line = reader.readLine();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                String result = stringBuilder.toString();
-                TextView text = (TextView)findViewById(R.id.uuidView);
-                text.setText(result);
-            }
-        }
+        String result = FileManager.readPrivate(this, filename);
+        TextView text = (TextView)findViewById(R.id.uuidView);
+        text.setText(result);
     }
 }

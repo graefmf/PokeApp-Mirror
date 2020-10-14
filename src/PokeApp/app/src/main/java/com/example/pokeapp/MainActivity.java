@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //sdk version is neeced for getSystemService
+        //sdk version is needed for getSystemService
         notificationManager = new NotiMan(this);
         fileManager = new FileMan(this);
     }

@@ -30,6 +30,7 @@ public class FileMan {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public FileMan(Context from) {
         this.from = from;
+        data = new JSONObject();
         readData();
     }
 

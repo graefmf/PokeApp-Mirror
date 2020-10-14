@@ -5,8 +5,12 @@ from uuid import uuid4
 from datetime import datetime
 import pytz
 import json
+from collections import defaultdict
 
 from .models import User, Friend
+
+
+POKE_QUEUE = defaultdict(list)
 
 
 def _nowlocal():
@@ -26,6 +30,24 @@ def _must_be_POST(f):
 
 @csrf_exempt
 @_must_be_POST
+def do_poke_inbound(request):
+    user = request.POST['user']
+    target = request.POST['target']
+    payload = request.POST['payload']
+    # Confirm user exists and user is friends with target
+    if User.objects.filter(uuid=user).exists() and Friend.objects.filter(user_uuid=user, friend_uuid=target).exists():
+        POKE_QUEUE[target].append([user, payload])
+        print(POKE_QUEUE)
+        friend_record = Friend.objects.get(user_uuid=user, friend_uuid=target)
+        friend_record.total_pokes += 1
+        friend_record.save() # commit row change to db
+        return HttpResponse('success')
+    else:
+        return HttpResponse('')
+
+
+@csrf_exempt
+@_must_be_POST
 def register(request):
     name = request.POST['name']
     uuid = str(uuid4()) # generate uuid for registration
@@ -36,11 +58,27 @@ def register(request):
 
 @csrf_exempt
 @_must_be_POST
-def update_poll(request):
+def poll(request):
     user = request.POST['user']
     if User.objects.filter(uuid=user).exists():
-        dat = {'name': User.objects.filter(uuid=user).values('name')[0]['name'], # TODO see if there is a nicer way that this
-                'friends': [v['friend_uuid'] for v in Friend.objects.filter(user_uuid=user).values('friend_uuid')]}
+        dat = {
+                'pokes': POKE_QUEUE.pop(user) if user in POKE_QUEUE.keys() else [],
+                }
+        return HttpResponse(json.dumps(dat))
+
+    else:
+        return HttpResponse('')
+
+
+@csrf_exempt
+@_must_be_POST
+def update(request):
+    user = request.POST['user']
+    if User.objects.filter(uuid=user).exists():
+        dat = {
+                'name': User.objects.filter(uuid=user).values('name')[0]['name'], # TODO see if there is a nicer way that this
+                'friends': [v['friend_uuid'] for v in Friend.objects.filter(user_uuid=user).values('friend_uuid')],
+                }
         return HttpResponse(json.dumps(dat))
 
     else:
@@ -62,4 +100,16 @@ def add_friend(request):
             return HttpResponse("success")
         else:
             return HttpResponse("invalid user")
+
+@csrf_exempt
+@_must_be_POST
+def delete_friend(request):
+    user = request.POST['user']
+    target = request.POST['target']
+    if Friend.objects.filter(user_uuid=user,friend_uuid=target).exists(): #existing friends case
+        Friend.objects.filter(user_uuid=user, friend_uuid=target).delete() #dt aware and pokes included?
+        Friend.objects.filter(user_uuid=target, friend_uuid=user).delete()
+        return HttpResponse("success")
+    else:
+        return HttpResponse("this friend doesn't exist")
 

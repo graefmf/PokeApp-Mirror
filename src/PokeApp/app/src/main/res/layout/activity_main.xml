@@ -16,7 +16,7 @@
         android:layout_marginEnd="162dp"
         android:layout_marginRight="162dp"
         android:onClick="d2"
-        android:text="Show"
+        android:text="Show UUID"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button" />
@@ -50,6 +50,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button2" />
+
+
+    <Button
+        android:id="@+id/scanButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="scan"
+        android:text="Scan"
+        app:layout_constraintBottom_toTopOf="@+id/uuidView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/qrButton"
+        app:layout_constraintVertical_bias="0.642" />
 
     <TextView
         android:id="@+id/uuidView"

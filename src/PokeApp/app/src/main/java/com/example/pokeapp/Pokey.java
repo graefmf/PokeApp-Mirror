@@ -36,10 +36,22 @@ public class Pokey implements Runnable{
         Log.d("POKEY", "Starting pokey with endpoint " + args[0]);
         switch(args[0]) {
             case "register":
-                addRegiRequest(args[1]);
+                addRegiRequest(args[1]); //name
                 break;
             case "friends/add":
-                //unimplemented
+                addAddFriendRequest(args[1], args[2]); //UUID, target ID
+                break;
+            case "friends/delete":
+                addRemoveFriendRequest(args[1], args[2]); //UUID, target ID
+                break;
+            case "poll":
+                addPollRequest(args[1]); //UUID
+                break;
+            case "poke":
+                addPokeRequest(args[1],args[2],args[3]); //UUID, target ID, payload
+                break;
+            case "update":
+                addUpdateRequest(args[1]);
                 break;
             default:
                 Log.d("POKEY", "endpoint not found");
@@ -64,6 +76,134 @@ public class Pokey implements Runnable{
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
                 params.put("name", regiName);
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+    }
+
+    void addPollRequest(String user_UUID) {
+        final String userID = user_UUID;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("VOLLEY", response);
+                source.setResult(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VOLLEY", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("user", userID);
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+    }
+
+    void addPokeRequest(String user_UUID, String targ_UUID, String content) {
+        final String userID = user_UUID;
+        final String targetID = targ_UUID;
+        final String payload = content;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("VOLLEY", response);
+                source.setResult(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VOLLEY", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("user", userID);
+                params.put("target", targetID);
+                params.put("payload", payload);
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+    }
+
+    void addUpdateRequest(String user_UUID) {
+        final String userID = user_UUID;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("VOLLEY", response);
+                source.setResult(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VOLLEY", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("user", userID);
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+    }
+
+    void addAddFriendRequest(String user_UUID, String target_UUID) {
+        final String userID = user_UUID;
+        final String targetID = target_UUID;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("VOLLEY", response);
+                source.setResult(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VOLLEY", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("user", userID);
+                params.put("target", targetID);
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+    }
+
+    void addRemoveFriendRequest(String user_UUID, String target_UUID) {
+        final String userID = user_UUID;
+        final String targetID = target_UUID;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("VOLLEY", response);
+                source.setResult(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VOLLEY", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("user", userID);
+                params.put("target", targetID);
                 return params;
             }
         };
